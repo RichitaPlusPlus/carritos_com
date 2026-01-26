@@ -1,0 +1,70 @@
+@import 'variables';
+
+// Global styles
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: $background-color;
+  color: $text-primary;
+  line-height: 1.6;
+}
+
+// Utility classes
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.mt-1 { margin-top: $spacing-xs; }
+.mt-2 { margin-top: $spacing-sm; }
+.mt-3 { margin-top: $spacing-md; }
+.mt-4 { margin-top: $spacing-lg; }
+.mt-5 { margin-top: $spacing-xl; }
+
+.mb-1 { margin-bottom: $spacing-xs; }
+.mb-2 { margin-bottom: $spacing-sm; }
+.mb-3 { margin-bottom: $spacing-md; }
+.mb-4 { margin-bottom: $spacing-lg; }
+.mb-5 { margin-bottom: $spacing-xl; }
+
+// Status badge styles
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: $border-radius-sm;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &.busy { background: $crowd-busy; color: white; }
+  &.mid-busy { background: $crowd-mid; color: #333; }
+  &.fast { background: $crowd-fast; color: white; }
+
+  &.angry { background: $rating-angry; color: white; }
+  &.sad { background: $rating-sad; color: #333; }
+  &.mid { background: $rating-mid; color: white; }
+  &.happy { background: $rating-happy; color: white; }
+}
+
+// Responsive helpers
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .container {
+    padding: 0 $spacing-sm;
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .container {
+    padding: 0 $spacing-xs;
+  }
+}
