@@ -1,6 +1,6 @@
 {
   "name": "carritos_com",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -33,6 +33,7 @@
     "sass-embedded": "^1.97.3",
     "vite": "^7.3.0",
     "vite-plugin-vue-devtools": "^8.0.5",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.16",
+    "sass": "^1.70.0"
   }
 }

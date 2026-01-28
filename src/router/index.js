@@ -1,27 +1,41 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router';
+import LoginView from '@/views/LoginView.vue';
+import HomeView from '@/views/HomeView.vue';
+import RoutesView from '@/views/RoutesView.vue';
+import RouteDetailView from '@/views/RouteDetailView.vue';
+import StopDetailView from '@/views/StopDetailView.vue';
+
+const routes = [
+  {
+    path: '/',
+    name: 'Login',
+    component: LoginView
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: HomeView
+  },
+  {
+    path: '/routes',
+    name: 'Routes',
+    component: RoutesView
+  },
+  {
+    path: '/route/:id',
+    name: 'RouteDetail',
+    component: RouteDetailView
+  },
+  {
+    path: '/stop/:id',
+    name: 'StopDetail',
+    component: StopDetailView
+  }
+];
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      // IMPORTANT: Check if HomeView.vue exists at this path
-      component: () => import('@/views/HomeView.vue')
-    },
-    {
-      path: '/car/:id',
-      name: 'car-details',
-      component: () => import('@/views/CarDetails.vue'),
-      props: true
-    },
-    // Optional: Add a 404 page
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'not-found',
-      component: () => import('@/views/NotFoundView.vue')
-    }
-  ]
-})
+  history: createWebHistory(),
+  routes
+});
 
-export default router
+export default router;
