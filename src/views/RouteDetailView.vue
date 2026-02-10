@@ -1,24 +1,32 @@
 <template>
   <div class="route-detail-view">
-    <div class="route-info-card">
+    <div v-if="loading" class="text-center py-4">Loading...</div>
+    <div v-else-if="error" class="text-center py-4 text-red-500">{{ error }}</div>
+    <div v-else class="route-info-card">
       <div class="route-info-card__header">
         <div class="route-info-card__main">
-          <span class="icon">🚗</span>
+          <span class="icon" v-if="!car.logos?.url">
+            {{ car.category?.includes('bus') ? '🚌' : '🚗' }}
+          </span>
+          <img v-else :src="car.logos.url" class="h-8 w-8 object-contain" alt="logo" />
           <div>
-            <h2 class="title">C3 - Galerias</h2>
-            <p class="schedule">6:30 am - 7:00 pm</p>
+            <h2 class="title">{{ car.name }}</h2>
+            <p class="schedule">{{ formatTime(car.schedule_start) }} - {{ formatTime(car.schedule_end) }}</p>
           </div>
         </div>
 
         <div class="route-info-card__prices">
-          <p class="price-primary">150bs</p>
-          <p class="price-secondary">170bs</p>
+          <p class="price-primary">{{ car.cost_min }}bs</p>
+          <p class="price-secondary">{{ car.cost_max }}bs</p>
         </div>
       </div>
 
       <div class="route-info-card__status">
-        <StatusTag text="Concurrido" type="danger" />
-        <span class="mood">☹️</span>
+        <StatusTag
+          :text="mapCrowdStatus(car.crowd_status).text"
+          :type="mapCrowdStatus(car.crowd_status).type"
+        />
+        <span class="mood">{{ mapRating(car.rating) }}</span>
       </div>
     </div>
 
@@ -43,39 +51,101 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import StatusTag from '@/components/StatusTag.vue';
 import TimelineNode from '@/components/TimelineNode.vue';
+import { useSupabaseData } from '@/composables/useSupabaseData';
 
-const timelineStops = [
-  {
-    title: 'C3',
-    description: 'Circunvalacion 3 - Parada cuatricentenario',
-    waitStatus: { text: 'Larga espera', type: 'danger' },
-    conditionStatus: { text: 'Horrible', type: 'danger' },
-    isLeft: true
-  },
-  {
-    title: 'Calle 94',
-    description: 'Gustavo Alvernaz',
-    waitStatus: { text: 'Corta espera', type: 'success' },
-    conditionStatus: { text: 'Regular', type: 'warning' },
-    isLeft: false
-  },
-  {
-    title: 'Calle 92',
-    description: 'calle cercanas a calt 94',
-    waitStatus: { text: 'Mediana espera', type: 'warning' },
-    conditionStatus: { text: 'Bien', type: 'success' },
-    isLeft: true
-  },
-  {
-    title: 'Av 67 - c87',
-    description: 'Calles cercanas a galerias',
-    waitStatus: { text: 'Larga espera', type: 'danger' },
-    conditionStatus: { text: 'Horrible', type: 'danger' },
-    isLeft: false
+const route = useRoute();
+const { fetchCarRoutes, loading, error } = useSupabaseData();
+
+const car = ref({});
+const timelineStops = ref([]);
+
+const loadData = async () => {
+  const result = await fetchCarRoutes(route.params.id);
+
+  if (result.car) {
+    car.value = result.car;
+    // Map routes to timeline nodes
+    timelineStops.value = result.routes.map((stop, index) => ({
+      id: stop.id,
+      title: stop.stop_name, // e.g. "C3"
+      description: stop.title, // e.g. "Circunvalacion 3..."
+      // Pass raw values to TimelineNode, assuming we update it.
+      // Or map here if we don't want to change TimelineNode too much.
+      // User request "Step 5" implies we SHOULD update the card to handle logic.
+      // So I will pass raw props and let child handle it, OR pass mapped props.
+      // To keep this clean, I'll pass mapped props as the current component expects objects.
+      // actually, let's map it here to be safe and compatible with current TimelineNode
+      waitStatus: mapWaitTime(stop.wait_time),
+      conditionStatus: mapLocationStatus(stop.location_status),
+      isLeft: index % 2 === 0,
+      // Pass other data if needed
+      originalData: stop
+    }));
   }
-];
+};
+
+onMounted(() => {
+  loadData();
+});
+
+// --- Mappers ---
+const formatTime = (timeStr) => {
+  if (!timeStr) return '';
+  const [hours, minutes] = timeStr.split(':');
+  const h = parseInt(hours);
+  const ampm = h >= 12 ? 'pm' : 'am';
+  const h12 = h % 12 || 12;
+  return `${h12}:${minutes} ${ampm}`;
+};
+
+const mapCrowdStatus = (status) => {
+  switch (status) {
+    case 'busy': return { text: 'Concurrido', type: 'danger' };
+    case 'mid_busy': return { text: 'Algo Concurrido', type: 'warning' };
+    case 'fast': return { text: 'Rápido', type: 'success' };
+    default: return { text: 'Normal', type: 'primary' };
+  }
+};
+
+const mapRating = (rating) => {
+  switch (rating) {
+    case 'angry': return '😠';
+    case 'sad': return '☹️';
+    case 'mid': return '😐';
+    case 'happy': return '😊';
+    default: return '😐';
+  }
+};
+
+const mapWaitTime = (val) => {
+  const map = {
+    'long_wait': { text: 'Larga espera', type: 'danger' },
+    'mid_wait': { text: 'Mediana espera', type: 'warning' },
+    'short_wait': { text: 'Corta espera', type: 'success' }
+  };
+  return map[val] || { text: 'Desconocido', type: 'default' };
+};
+
+const mapLocationStatus = (val) => {
+  const map = {
+    'horrible': { text: 'Horrible', type: 'danger' },
+    'regular': { text: 'Regular', type: 'warning' },
+    'good': { text: 'Bien', type: 'success' }
+  };
+  return map[val] || { text: 'Normal', type: 'primary' };
+};
+
+// --- Car Helpers (since we didn't fetch full car details in fetchCarRoutes, only name/id from separate query if simplest,
+// OR we might want to fetch full car details.
+// My useSupabaseData.fetchCarRoutes only selected 'route_ids, name'.
+// I should probably enhance fetchCarRoutes to return more car info if needed for the header.
+// The header shows: name, schedule, prices, rating/mood.
+// My fetchCarRoutes currently fetches: .select('route_ids, name')
+// I need to update useSupabaseData.js to fetch more fields for the car!
 </script>
 
 <style lang="scss" scoped>

@@ -15,7 +15,7 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.91.1",
+    "@supabase/supabase-js": "^2.95.3",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4"
   },
@@ -30,10 +30,10 @@
     "globals": "^17.0.0",
     "jsdom": "^27.4.0",
     "prettier": "3.7.4",
+    "sass": "^1.70.0",
     "sass-embedded": "^1.97.3",
     "vite": "^7.3.0",
     "vite-plugin-vue-devtools": "^8.0.5",
-    "vitest": "^4.0.16",
-    "sass": "^1.70.0"
+    "vitest": "^4.0.16"
   }
 }

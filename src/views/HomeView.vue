@@ -4,7 +4,7 @@
       <h2 class="home-header__title">Bienvenido Usuario</h2>
       <p class="home-header__subtitle">¿a donde vamos?</p>
       <p class="home-header__fluctuation">
-        Fluctuación del día <strong>$ 344.97 bs.</strong>
+        Fluctuación del día <strong>$ {{ dollarRate }} bs.</strong>
       </p>
     </header>
 
@@ -17,9 +17,16 @@
     </div>
 
     <div class="home-transports">
+      <div v-if="loading" class="text-center py-4">
+        Cargando carritos...
+      </div>
+      <div v-else-if="error" class="text-center py-4 text-red-500">
+        {{ error }}
+      </div>
       <TransportCard
+        v-else
         v-for="(transport, index) in transports"
-        :key="index"
+        :key="transport.id || index"
         v-bind="transport"
         @click="goToDetail(transport)"
       />
@@ -28,59 +35,80 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import TransportCard from '@/components/TransportCard.vue';
+import { useSupabaseData } from '@/composables/useSupabaseData';
 
 const router = useRouter();
+const { fetchCars, fetchDollarRate, loading, error } = useSupabaseData();
 
-const transports = [
-  {
-    icon: '🚗',
-    title: 'C3-Galerias',
-    schedule: '6:30 am - 7:00 pm',
-    status: { text: 'Concurrido', type: 'danger' },
-    mood: '☹️',
-    prices: ['150bs', '170bs']
-  },
-  {
-    icon: '🚌',
-    title: 'Galerias - Urbe - Lago Mall',
-    schedule: '8:00 am - 7:00 pm',
-    status: { text: 'Algo Concurrido', type: 'warning' },
-    mood: '😐',
-    prices: ['100bs', '130bs']
-  },
-  {
-    icon: '🚌',
-    title: 'K4',
-    schedule: '7:30 - 6:00 pm',
-    status: { text: 'Rápido', type: 'success' },
-    mood: '😊',
-    prices: ['150bs', '180bs']
-  },
-  {
-    icon: '🚗',
-    title: 'San Jacinto',
-    schedule: '6:30 am - 7:00 pm',
-    status: { text: 'Rápido', type: 'success' },
-    mood: '😊',
-    prices: ['150bs', '170bs']
-  },
-  {
-    icon: '🚗',
-    title: 'Bella Vista',
-    schedule: '6:30 am - 7:00 pm',
-    status: { text: 'Algo Concurrido', type: 'warning' },
-    mood: '😐',
-    prices: ['150bs', '170bs']
-  }
-];
+const transports = ref([]);
+const dollarRate = ref(0);
+
+const loadData = async () => {
+  const [carsData, rateData] = await Promise.all([
+    fetchCars(),
+    fetchDollarRate()
+  ]);
+
+  dollarRate.value = rateData;
+
+  // Transform Supabase data to TransportCard format
+  transports.value = carsData.map(car => ({
+    id: car.id,
+    // Use the logo url from the joined table, or a fallback
+    icon: car.logos?.url || (car.category?.includes('bus') ? '🚌' : '🚗'),
+    title: car.name,
+    schedule: `${formatTime(car.schedule_start)} - ${formatTime(car.schedule_end)}`,
+    status: mapCrowdStatus(car.crowd_status),
+    mood: mapRating(car.rating),
+    prices: [`${car.cost_min}bs`, `${car.cost_max}bs`],
+    // Store original object data if needed for detail view navigation
+    originalData: car
+  }));
+};
+
+onMounted(() => {
+  loadData();
+});
 
 const goToDetail = (transport) => {
   router.push({
-    name: 'RouteDetail',
-    params: { id: transport.title }
+    name: 'RouteDetail', // Maps to what was 'CarView' or 'RouteDetailView'
+    params: { id: transport.id } // Pass ID instead of title
   });
+};
+
+// --- Helper Mappers ---
+
+const formatTime = (timeStr) => {
+  if (!timeStr) return '';
+  // Simple check for HH:MM:SS
+  const [hours, minutes] = timeStr.split(':');
+  const h = parseInt(hours);
+  const ampm = h >= 12 ? 'pm' : 'am';
+  const h12 = h % 12 || 12;
+  return `${h12}:${minutes} ${ampm}`;
+};
+
+const mapCrowdStatus = (status) => {
+  switch (status) {
+    case 'busy': return { text: 'Concurrido', type: 'danger' };
+    case 'mid_busy': return { text: 'Algo Concurrido', type: 'warning' };
+    case 'fast': return { text: 'Rápido', type: 'success' };
+    default: return { text: 'Normal', type: 'primary' };
+  }
+};
+
+const mapRating = (rating) => {
+  switch (rating) {
+    case 'angry': return '😠';
+    case 'sad': return '☹️';
+    case 'mid': return '😐';
+    case 'happy': return '😊';
+    default: return '😐';
+  }
 };
 </script>
 

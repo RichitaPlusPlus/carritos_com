@@ -1,73 +1,135 @@
 <template>
   <div class="stop-detail-view">
-    <div class="stop-header">
-      <div class="stop-header__image">
-        <img
-          src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop"
-          alt="Parada"
-        />
-      </div>
-    </div>
-
-    <div class="stop-content">
-      <h2 class="stop-content__title">C3</h2>
-      <p class="stop-content__description">
-        Circunvalacion 3 - Parada cuatricentenario
-      </p>
-
-      <div class="stop-content__tags">
-        <StatusTag text="Larga espera" type="danger" />
-        <StatusTag text="Horrible" type="danger" />
-      </div>
-
-      <div class="info-box info-box--warning">
-        <p>
-          Avendo Circunvalacion 3, Simon Rey de Reyes, Francisco Eugenio Bustamante,
-          Estado Zulia
-        </p>
-      </div>
-
-      <div class="info-box info-box--alert">
-        <p>
-          De las peores ubicaciones para esperar un pasaje público. Evitar si es
-          posible en especial si eres mujer o eres muy propenso a ti a que te pase
-          algo, propenso al malandreo
-        </p>
-      </div>
-
-      <div class="attributes-box">
-        <div
-          v-for="(attr, index) in attributes"
-          :key="index"
-          class="attribute-item"
-        >
-          <span class="attribute-item__icon">{{ attr.icon }}</span>
-          <p class="attribute-item__text">{{ attr.text }}</p>
+    <div v-if="loading" class="text-center py-4">Loading...</div>
+    <div v-else-if="error" class="text-center py-4 text-red-500">{{ error }}</div>
+    <template v-else>
+      <div class="stop-header">
+        <div class="stop-header__image">
+          <img
+            :src="stop.image_url || 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=300&fit=crop'"
+            alt="Parada"
+          />
         </div>
       </div>
 
-      <button class="gps-button">
-        <span class="icon">📍</span>
-        Ubicacion GPS
-      </button>
-    </div>
+      <div class="stop-content">
+        <h2 class="stop-content__title">{{ stop.stop_name || 'Parada' }}</h2>
+        <p class="stop-content__description">
+          {{ stop.title }}
+        </p>
+
+        <div class="stop-content__tags">
+          <StatusTag
+            :text="mapWaitTime(stop.wait_time).text"
+            :type="mapWaitTime(stop.wait_time).type"
+          />
+          <StatusTag
+            :text="mapLocationStatus(stop.location_status).text"
+            :type="mapLocationStatus(stop.location_status).type"
+          />
+        </div>
+
+        <div v-if="stop.address_text" class="info-box info-box--warning">
+          <p>
+            {{ stop.address_text }}
+          </p>
+        </div>
+
+        <div v-if="stop.description" class="info-box info-box--alert">
+          <p>
+            {{ stop.description }}
+          </p>
+        </div>
+
+        <div class="attributes-box" v-if="attributes.length > 0">
+          <div
+            v-for="(attr, index) in attributes"
+            :key="index"
+            class="attribute-item"
+          >
+            <span class="attribute-item__icon">{{ attr.icon }}</span>
+            <p class="attribute-item__text">{{ attr.text }}</p>
+          </div>
+        </div>
+
+        <a
+          v-if="stop.gps_url"
+          :href="stop.gps_url"
+          target="_blank"
+          class="gps-button"
+          style="text-decoration: none;"
+        >
+          <span class="icon">📍</span>
+          Ubicacion GPS
+        </a>
+      </div>
+    </template>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import StatusTag from '@/components/StatusTag.vue';
+import { useSupabaseData } from '@/composables/useSupabaseData';
 
-const attributes = [
-  { icon: '💸', text: 'Tendencia a pasajes altos' },
-  { icon: '🦺', text: 'Sin vigilancia policial' },
-  { icon: '🏚️', text: 'Calles horribles' },
-  { icon: '☀️', text: 'Caluroso' },
-  { icon: '🏠', text: 'Techos con sombra' },
-  { icon: '📍', text: 'hay faroles' },
-  { icon: '🪑', text: 'Asientos de espera' },
-  { icon: '🏪', text: 'Tiendas cerca' },
-  { icon: '♿', text: 'Personal capacitado' }
-];
+const route = useRoute();
+const { fetchStopDetails, loading, error } = useSupabaseData();
+
+const stop = ref({});
+const attributes = ref([]);
+
+const loadData = async () => {
+  const data = await fetchStopDetails(route.params.id);
+  if (data) {
+    stop.value = data;
+    // Map route_attributes to view model
+    if (data.route_attributes) {
+      attributes.value = data.route_attributes.map(ra => ({
+        text: ra.attributes?.label,
+        icon: getAttributeIcon(ra.attributes?.type),
+        type: ra.attributes?.type
+      })).filter(attr => attr.text);
+    }
+  }
+};
+
+onMounted(() => {
+  loadData();
+});
+
+const getAttributeIcon = (type) => {
+  const icons = {
+    'personal': '♿',
+    'stores': '🏪',
+    'roof': '🏠',
+    'lights': '📍', // or 💡
+    'chairs': '🪑',
+    'high_fares': '💸',
+    'no_vigilancy': '🦺', // or 👮‍♂️
+    'hot': '☀️',
+    'bad_route': '🏚️'
+  };
+  return icons[type] || '✨';
+};
+
+const mapWaitTime = (val) => {
+  const map = {
+    'long_wait': { text: 'Larga espera', type: 'danger' },
+    'mid_wait': { text: 'Mediana espera', type: 'warning' },
+    'short_wait': { text: 'Corta espera', type: 'success' }
+  };
+  return map[val] || { text: 'Desconocido', type: 'default' };
+};
+
+const mapLocationStatus = (val) => {
+  const map = {
+    'horrible': { text: 'Horrible', type: 'danger' },
+    'regular': { text: 'Regular', type: 'warning' },
+    'good': { text: 'Bien', type: 'success' }
+  };
+  return map[val] || { text: 'Normal', type: 'primary' };
+};
 </script>
 
 <style lang="scss" scoped>
