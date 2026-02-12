@@ -110,6 +110,56 @@ export const carritosService = {
   },
 
   /**
+   * Fetch a single route by ID with its attributes
+   * @param {string} routeId
+   */
+  async getRouteById(routeId) {
+    const { data: route, error } = await supabase
+      .from('routes')
+      .select(`
+        *,
+        route_attributes (
+          attribute:attributes (
+            type,
+            label
+          )
+        )
+      `)
+      .eq('id', routeId)
+      .single()
+
+    if (error) {
+      console.error('Error fetching route:', error)
+      throw error
+    }
+
+    if (route) {
+      // Flatten attributes
+      route.attributes = route.route_attributes?.map(ra => ra.attribute) || []
+      delete route.route_attributes
+    }
+
+    return route
+  },
+
+  /**
+   * Fetch all routes
+   */
+  async getAllRoutes() {
+    const { data: routes, error } = await supabase
+      .from('routes')
+      .select('*')
+      .order('stop_name')
+
+    if (error) {
+      console.error('Error fetching all routes:', error)
+      throw error
+    }
+
+    return routes
+  },
+
+  /**
    * Convert Bs to USD using current rate
    */
   async convertBsToUsd(bsAmount) {

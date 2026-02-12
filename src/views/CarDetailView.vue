@@ -38,6 +38,8 @@
           :key="route.id"
           class="stop-item"
           :class="{ 'current': index === 0, 'last': index === routes.length - 1 }"
+          @click="goToRouteDetail(route.id)"
+          style="cursor: pointer;"
         >
           <div class="stop-marker">
             <div class="marker-circle"></div>
@@ -63,8 +65,8 @@
             <!-- Attributes -->
             <div class="attributes" v-if="route.attributes && route.attributes.length > 0">
               <span
-                v-for="attr in route.attributes"
-                :key="attr.id"
+                v-for="(attr, index) in route.attributes"
+                :key="index"
                 class="attribute-tag"
               >
                 {{ attr.label }}
@@ -72,22 +74,20 @@
             </div>
 
             <div class="stop-actions" v-if="route.gps_url || route.image_url">
-              <a
+              <button
                 v-if="route.gps_url"
-                :href="route.gps_url"
-                target="_blank"
+                @click.stop="openLink(route.gps_url)"
                 class="action-btn gps"
               >
-                🗺️ Open GPS
-              </a>
-              <a
+                🗺️ Ubicación GPS
+              </button>
+              <button
                 v-if="route.image_url"
-                :href="route.image_url"
-                target="_blank"
+                @click.stop="openLink(route.image_url)"
                 class="action-btn image"
               >
-                📸 View Image
-              </a>
+                📸 Ver Imagen
+              </button>
             </div>
 
             <p class="address" v-if="route.address_text">
@@ -115,10 +115,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { carritosService } from '@/lib/carritosService'
 
 const route = useRoute()
+const router = useRouter()
 const car = ref({})
 const routes = ref([])
 const loading = ref(true)
@@ -144,6 +145,14 @@ onMounted(() => {
 })
 
 // Helper Functions
+const goToRouteDetail = (routeId) => {
+  router.push({ name: 'route-details', params: { id: routeId } })
+}
+
+const openLink = (url) => {
+  if (url) window.open(url, '_blank')
+}
+
 const formatCategory = (category) => {
   const map = {
     'public_car': 'Public Car',

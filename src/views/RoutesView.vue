@@ -1,176 +1,245 @@
 <template>
   <div class="routes-view">
-    <header class="routes-header">
-      <div class="routes-header__text">
-        <h2 class="routes-header__title">Rutas</h2>
-        <p class="routes-header__subtitle">¿Donde te encuentras?</p>
-      </div>
+    <div class="header">
+      <h1>Rutas</h1>
+      <p>¿Dónde te encuentras?</p>
 
-      <div class="routes-header__icons">
-        <span class="icon">❤️</span>
-        <span class="icon">☹️</span>
-      </div>
-    </header>
-
-    <div class="routes-search">
-      <div class="search-box">
-        <input
-          type="text"
-          class="search-box__input"
-          placeholder="Busca una ruta"
-        />
-        <p class="search-box__hint">Que Ruta te queda mas cerca?</p>
-        <div class="search-box__gps">
-          <p>Copia y pega aqui tu direccion GPS</p>
-          <span class="icon">📋</span>
-        </div>
+      <div class="search-bar">
+        <input type="text" placeholder="Busca una ruta" v-model="searchQuery" />
+        <span class="icon">🔍</span>
       </div>
     </div>
 
-    <div class="routes-grid">
-      <StopCard
-        v-for="(stop, index) in stops"
-        :key="index"
-        v-bind="stop"
-        @click="goToStopDetail(stop)"
-      />
+    <div v-if="loading" class="text-center py-4">Loading...</div>
+    <div v-else-if="error" class="text-center py-4 text-red-500">{{ error }}</div>
+
+    <div v-else class="routes-grid">
+      <div
+        v-for="route in filteredRoutes"
+        :key="route.id"
+        class="route-card"
+        @click="goToRoute(route.id)"
+      >
+        <div class="route-header">
+          <h3>{{ route.stop_name }}</h3>
+          <span class="heart-icon" v-if="false">❤️</span>
+        </div>
+
+        <p class="route-subtitle">{{ route.title }}</p>
+
+        <StatusTag
+          :text="mapWaitTime(route.wait_time).text"
+          :type="mapWaitTime(route.wait_time).type"
+          class="mb-2"
+        />
+
+        <div class="status-row">
+          <span class="mood-icon">😐</span>
+          <StatusTag
+            :text="mapLocationStatus(route.location_status).text"
+            :type="mapLocationStatus(route.location_status).type"
+          />
+        </div>
+
+        <button class="gps-btn-small" @click.stop="openLink(route.gps_url)">
+          <span class="icon">!</span> Ubicacion GPS
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import StopCard from '@/components/StopCard.vue';
+import { carritosService } from '@/lib/carritosService';
+import StatusTag from '@/components/StatusTag.vue';
 
 const router = useRouter();
+const routes = ref([]);
+const loading = ref(true);
+const error = ref(null);
+const searchQuery = ref('');
 
-const stops = [
-  {
-    title: 'Calle 94',
-    description: 'Gustavo Alvernaz - De cuatricentenario',
-    waitStatus: { text: 'Corta espera', type: 'success' },
-    conditionStatus: { text: 'Regular', type: 'warning' }
-  },
-  {
-    title: 'C3',
-    description: 'Circunvalacion 3 - Parada cuatricentenario',
-    waitStatus: { text: 'Larga espera', type: 'danger' },
-    conditionStatus: { text: 'Horrible', type: 'danger' }
-  },
-  {
-    title: 'Calle 92',
-    description: 'calle cercanas a calt 94',
-    waitStatus: { text: 'Mediana espera', type: 'warning' },
-    conditionStatus: { text: 'Bien', type: 'success' }
-  },
-  {
-    title: 'Av 67 - c87',
-    description: 'Calles cercanas a galerias y calle Libar Paredes',
-    waitStatus: { text: 'Larga espera', type: 'danger' },
-    conditionStatus: { text: 'Horrible', type: 'danger' }
+const fetchRoutes = async () => {
+  try {
+    loading.value = true;
+    routes.value = await carritosService.getAllRoutes();
+  } catch (err) {
+    error.value = 'Error cargando rutas';
+    console.error(err);
+  } finally {
+    loading.value = false;
   }
-];
-
-const goToStopDetail = (stop) => {
-  router.push({
-    name: 'StopDetail',
-    params: { id: stop.title }
-  });
 };
+
+const filteredRoutes = computed(() => {
+  if (!searchQuery.value) return routes.value;
+  const q = searchQuery.value.toLowerCase();
+  return routes.value.filter(r =>
+    r.stop_name.toLowerCase().includes(q) ||
+    r.title.toLowerCase().includes(q)
+  );
+});
+
+const goToRoute = (id) => {
+  router.push({ name: 'route-details', params: { id } });
+};
+
+const openLink = (url) => {
+  if (url) window.open(url, '_blank');
+};
+
+// Mappers
+const mapWaitTime = (val) => {
+  const map = {
+    'long_wait': { text: 'Larga espera', type: 'danger' },
+    'mid_wait': { text: 'Mediana espera', type: 'warning' },
+    'short_wait': { text: 'Corta espera', type: 'success' }
+  };
+  return map[val] || { text: 'Desconocido', type: 'default' };
+};
+
+const mapLocationStatus = (val) => {
+  const map = {
+    'horrible': { text: 'Horrible', type: 'danger' },
+    'regular': { text: 'Regular', type: 'warning' },
+    'good': { text: 'Bien', type: 'success' }
+  };
+  return map[val] || { text: 'Normal', type: 'primary' };
+};
+
+onMounted(() => {
+  fetchRoutes();
+});
 </script>
 
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @import '@/assets/styles/variables';
 
 .routes-view {
+  padding: 20px;
   padding-bottom: 100px;
 }
 
-.routes-header {
-  background: $blue-gray;
-  border-radius: 0 0 40px 40px;
-  padding: 24px;
-  color: $white;
-  margin-bottom: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+.header {
+  background-color: #546e7a;
+  color: white;
+  padding: 20px;
+  border-radius: 0 0 30px 30px;
+  margin: -20px -20px 20px -20px;
 
-  &__title {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0 0 4px;
-  }
-
-  &__subtitle {
-    font-size: 14px;
+  h1 {
     margin: 0;
+    font-size: 32px;
   }
 
-  &__icons {
-    display: flex;
-    gap: 8px;
-
-    .icon {
-      font-size: 24px;
-    }
+  p {
+    margin: 5px 0 20px 0;
+    opacity: 0.9;
   }
 }
 
-.routes-search {
-  padding: 0 16px;
-  margin-bottom: 24px;
-}
+.search-bar {
+  position: relative;
 
-.search-box {
-  background: $white;
-  border-radius: $radius-lg;
-  padding: 16px;
-  box-shadow: $shadow-md;
-
-  &__input {
+  input {
     width: 100%;
+    padding: 12px 40px 12px 20px;
+    border-radius: 20px;
     border: none;
     font-size: 14px;
-    margin-bottom: 8px;
-
-    &::placeholder {
-      color: #999;
-    }
-
-    &:focus {
-      outline: none;
-    }
   }
 
-  &__hint {
-    font-size: 12px;
+  .icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
     color: #999;
-    margin: 0 0 4px;
-  }
-
-  &__gps {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: #999;
-
-    p {
-      margin: 0;
-    }
-
-    .icon {
-      font-size: 18px;
-      color: $black;
-    }
   }
 }
 
 .routes-grid {
-  padding: 0 16px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 15px;
+}
+
+.route-card {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.route-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 5px;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+  }
+}
+
+.route-subtitle {
+  font-size: 12px;
+  color: #666;
+  margin: 0 0 10px 0;
+  line-height: 1.3;
+}
+
+.mb-2 {
+  margin-bottom: 8px;
+  display: block;
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 15px;
+
+  .mood-icon {
+    font-size: 18px;
+  }
+}
+
+.gps-btn-small {
+  width: 100%;
+  background-color: #546e7a;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+
+  .icon {
+    background: black;
+    color: white;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+  }
 }
 </style>
