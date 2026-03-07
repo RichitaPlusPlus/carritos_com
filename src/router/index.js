@@ -23,6 +23,29 @@ const routes = [
     name: 'Routes',
     component: RoutesView
   },
+  // ── CRUD Form routes (must come BEFORE the :id catch-all) ──
+  {
+    path: '/cars/new',
+    name: 'CarCreate',
+    component: () => import('@/views/CarForm.vue')
+  },
+  {
+    path: '/cars/:id/edit',
+    name: 'CarEdit',
+    component: () => import('@/views/CarForm.vue'),
+    props: true
+  },
+  {
+    path: '/routes/new',
+    name: 'RouteCreate',
+    component: () => import('@/views/RouteForm.vue')
+  },
+  {
+    path: '/routes/:id/edit',
+    name: 'RouteEdit',
+    component: () => import('@/views/RouteForm.vue'),
+    props: true
+  },
   {
     path: '/car/:id',
     name: 'RouteDetail', // Kept name for compatibility with HomeView link, but component is CarDetailView

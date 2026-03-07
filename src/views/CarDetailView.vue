@@ -51,7 +51,6 @@
               <span class="stop-order">{{ index + 1 }}</span>
             </div>
             <p class="stop-title">{{ route.title }}</p>
-            <p class="stop-description" v-if="route.description">{{ route.description }}</p>
 
             <div class="stop-meta">
               <span class="wait-time" :class="route.wait_time">
