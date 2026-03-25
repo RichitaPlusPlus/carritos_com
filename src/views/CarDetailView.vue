@@ -2,7 +2,7 @@
   <div class="car-details" v-if="!loading">
     <div class="header">
       <button class="back-btn" @click="$router.back()">
-        ← Back to List
+        ← Volver a la lista
       </button>
       <h1>{{ car.name }}</h1>
       <div class="car-meta">
@@ -14,24 +14,24 @@
 
     <div class="car-info-grid">
       <div class="info-card">
-        <h3>📅 Schedule</h3>
+        <h3>📅 Horario</h3>
         <p>{{ formatSchedule(car.schedule_start, car.schedule_end) }}</p>
       </div>
 
       <div class="info-card">
-        <h3>👥 Crowd</h3>
+        <h3>Multitud</h3>
         <p>{{ formatCrowd(car.crowd_status) }}</p>
       </div>
 
       <div class="info-card">
-        <h3>⭐ Rating</h3>
+        <h3>⭐ Valoración</h3>
         <p>{{ formatRating(car.rating) }}</p>
       </div>
     </div>
 
     <!-- Route Visualization -->
     <div class="route-visualization">
-      <h2>Route Stops</h2>
+      <h2>Paradas</h2>
       <div class="timeline">
         <div
           v-for="(route, index) in routes"
@@ -101,12 +101,12 @@
   <!-- Loading State -->
   <div v-else class="loading">
     <div class="spinner"></div>
-    <p>Loading route details...</p>
+    <p>Cargando detalles del carrito...</p>
   </div>
 
   <!-- Error State -->
   <div v-if="error" class="error">
-    <h3>Error loading car details</h3>
+    <h3>Error al cargar los detalles del carrito</h3>
     <p>{{ error }}</p>
     <button @click="fetchCarDetails">Try Again</button>
   </div>
@@ -154,9 +154,9 @@ const openLink = (url) => {
 
 const formatCategory = (category) => {
   const map = {
-    'public_car': 'Public Car',
-    'public_bus': 'Public Bus',
-    'private_car': 'Private Car'
+    'public_car': 'Carrito Publico',
+    'public_bus': 'Bus Publico',
+    'private_car': 'Carro Privado'
   }
   return map[category] || category
 }
@@ -172,43 +172,44 @@ const formatSchedule = (start, end) => {
 
 const formatCrowd = (status) => {
   const map = {
-    'busy': 'Busy 🚶‍♂️🚶‍♀️',
-    'mid_busy': 'Moderate 👥',
-    'fast': 'Fast 🏃'
+    'busy': 'Lleno 🚶‍♂️🚶‍♀️',
+    'mid_busy': 'Moderado 👥',
+    'fast': 'Rapido 🏃'
   }
   return map[status] || status
 }
 
 const formatRating = (rating) => {
   const map = {
-    'angry': 'Poor 😠',
-    'sad': 'Fair 😕',
-    'mid': 'Average 😐',
-    'happy': 'Good 😊'
+    'angry': 'Mala 😠',
+    'sad': 'Regular 😕',
+    'mid': 'Normal 😐',
+    'happy': 'Buenisimo 😊'
   }
   return map[rating] || rating
 }
 
 const formatWaitTime = (waitTime) => {
   const map = {
-    'long_wait': 'Long wait (15+ min)',
-    'mid_wait': 'Moderate wait (5-15 min)',
-    'short_wait': 'Short wait (<5 min)'
+    'long_wait': 'larga espera (15+ min)',
+    'mid_wait': 'espera moderada (5-15 min)',
+    'short_wait': 'espera corta (<5 min)'
   }
   return map[waitTime] || waitTime
 }
 
 const formatLocationStatus = (status) => {
   const map = {
-    'horrible': 'Poor area',
-    'regular': 'Normal area',
-    'good': 'Good area'
+    'horrible': 'Mala zona',
+    'regular': 'Zona normal',
+    'good': 'Buena zona'
   }
   return map[status] || status
 }
 </script>
 
-<style scoped>
+<style>
+
 .car-details {
   max-width: 800px;
   margin: 0 auto;
@@ -216,8 +217,8 @@ const formatLocationStatus = (status) => {
 }
 
 .back-btn {
-  background: none;
-  border: 1px solid #ddd;
+  background: #596E79;
+  border: 3px solid #ddd;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
@@ -249,15 +250,15 @@ const formatLocationStatus = (status) => {
 }
 
 .category, .cost {
-  background: #e3f2fd;
+  background:#2DC75C ;
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .cost {
-  background: #e8f5e9;
+  background: #C7B198;
 }
 
 .car-info-grid {
@@ -293,12 +294,13 @@ const formatLocationStatus = (status) => {
   border-radius: 12px;
   padding: 25px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom: 100px;
 }
 
 .route-visualization h2 {
   margin: 0 0 25px 0;
   color: #2c3e50;
-  border-bottom: 2px solid #3498db;
+  border-bottom: 2px solid #28423F;
   padding-bottom: 10px;
 }
 
@@ -338,17 +340,18 @@ const formatLocationStatus = (status) => {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #3498db;
+  background: #28423F;
   border: 3px solid white;
-  box-shadow: 0 0 0 3px #3498db;
+  box-shadow: 0 0 0 3px #213331;
   z-index: 2;
 }
 
 .marker-line {
   flex: 1;
   width: 2px;
-  background: #3498db;
-  margin-top: 5px;
+  background: none;
+  border-left: 10px dashed #333;
+  margin-top: 10px;
 }
 
 .stop-content {
@@ -356,7 +359,7 @@ const formatLocationStatus = (status) => {
   background: #f8f9fa;
   border-radius: 8px;
   padding: 15px;
-  border-left: 4px solid #3498db;
+  border-left: 4px solid #213331;
 }
 
 .stop-header {
@@ -373,8 +376,8 @@ const formatLocationStatus = (status) => {
 }
 
 .stop-order {
-  background: #3498db;
-  color: white;
+  background: #DFD3C3;
+  color: rgb(0, 0, 0);
   width: 28px;
   height: 28px;
   border-radius: 50%;
@@ -471,7 +474,7 @@ const formatLocationStatus = (status) => {
 }
 
 .action-btn.gps {
-  background: #3498db;
+  background: #28423f;
   color: white;
 }
 
@@ -503,7 +506,7 @@ const formatLocationStatus = (status) => {
   width: 40px;
   height: 40px;
   border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  border-top: 4px solid #28423F;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 20px;
@@ -522,7 +525,7 @@ const formatLocationStatus = (status) => {
 }
 
 .error button {
-  background: #3498db;
+  background: #28423F;
   color: white;
   border: none;
   padding: 10px 20px;

@@ -20,8 +20,7 @@
     </div>
 
     <div class="transport-card__links">
-      <button class="link-btn">ver rutas &gt;</button>
-      <button class="link-btn">Paradas &gt;</button>
+      <button class="link-btn">Ver Rutas &gt;</button>
     </div>
   </div>
 </template>

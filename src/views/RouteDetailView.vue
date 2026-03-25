@@ -140,8 +140,8 @@ onMounted(() => {
 }
 
 .back-btn {
-  background: none;
-  border: 1px solid #ddd;
+  background: #596E79;
+  border: 3px solid #ddd;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
