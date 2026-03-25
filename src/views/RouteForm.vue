@@ -460,15 +460,13 @@ const handleCancel = () => {
 }
 
 .back-btn {
-  background: none;
-  border: 1px solid #ddd;
+  background: #596E79;
+  border: 3px solid #ddd;
   padding: 8px 16px;
-  border-radius: $radius-sm;
+  border-radius: 4px;
   cursor: pointer;
+  margin-bottom: 20px;
   font-size: 14px;
-  transition: background 0.2s;
-
-  &:hover { background: #f5f5f5; }
 }
 
 /* ── Form Card ─────────────────────────────────────────────── */

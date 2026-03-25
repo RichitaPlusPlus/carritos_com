@@ -30,7 +30,7 @@
       <div class="info-box description" v-if="routeData.description">
         <p>{{ routeData.description }}</p>
       </div>
-
+      <h2 class="attributes-title">Caracteristicas</h2>
       <!-- Attributes Grid -->
       <div class="attributes-grid" v-if="routeData.attributes && routeData.attributes.length > 0">
         <div
@@ -58,7 +58,7 @@
     </div>
   </div>
   <div v-else class="loading">
-    Loading...
+    Cargando...
   </div>
 </template>
 
@@ -217,6 +217,9 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 15px;
+  background-color: #DFD3C3;
+  padding: 10px;
+  border-radius: 8px;
 
   .icon {
     font-size: 20px;

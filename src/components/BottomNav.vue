@@ -14,7 +14,10 @@
       🛣️
     </button>
 
-    <button class="nav-btn">
+    <button
+      :class="['nav-btn', { active: activeView === 'menu' }]"
+      @click="$emit('navigate', 'menu')"
+    >
       👤
     </button>
   </nav>

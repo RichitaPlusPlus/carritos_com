@@ -21,12 +21,13 @@ const route = useRoute();
 const router = useRouter();
 
 const showBottomNav = computed(() => {
-  return ['Home', 'Routes', 'RouteDetail'].includes(route.name);
+  return ['Home', 'Routes', 'RouteDetail', 'UserMenu'].includes(route.name);
 });
 
 const currentRoute = computed(() => {
   if (route.name === 'Home') return 'home';
   if (route.name === 'Routes') return 'routes';
+  if (route.name === 'UserMenu') return 'menu';
   return '';
 });
 
@@ -35,6 +36,8 @@ const handleNavigation = (view) => {
     router.push('/home');
   } else if (view === 'routes') {
     router.push('/routes');
+  } else if (view === 'menu') {
+    router.push('/menu');
   }
 };
 </script>

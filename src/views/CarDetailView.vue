@@ -19,7 +19,7 @@
       </div>
 
       <div class="info-card">
-        <h3>Multitud</h3>
+        <h3>👥 Concurrencia</h3>
         <p>{{ formatCrowd(car.crowd_status) }}</p>
       </div>
 
@@ -262,30 +262,38 @@ const formatLocationStatus = (status) => {
 }
 
 .car-info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 30px;
 }
 
 .info-card {
+  flex: 1;
   background: white;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 15px;
+  border-radius: 12px;
+  padding: 12px 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .info-card h3 {
-  margin: 0 0 8px 0;
-  font-size: 14px;
+  margin: 0 0 6px 0;
+  font-size: 13px;
   color: #666;
+  white-space: nowrap;
 }
 
 .info-card p {
   margin: 0;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 /* Route Visualization */
@@ -540,7 +548,21 @@ const formatLocationStatus = (status) => {
   }
 
   .car-info-grid {
-    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  
+  .info-card {
+    padding: 10px 5px;
+  }
+  
+  .info-card h3 {
+    font-size: 11px;
+    margin-bottom: 4px;
+    white-space: normal;
+  }
+  
+  .info-card p {
+    font-size: 12px;
   }
 
   .stop-meta {

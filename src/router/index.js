@@ -56,6 +56,11 @@ const routes = [
     name: 'route-details',
     component: RouteDetailView
   },
+  {
+    path: '/menu',
+    name: 'UserMenu',
+    component: () => import('@/views/UserMenuView.vue')
+  },
   // Keep StopDetail as fallback or alias if needed, but RouteDetailView is the new one
   {
     path: '/stop/:id',
