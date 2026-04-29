@@ -8,23 +8,31 @@
       <button class="menu-btn" @click="handleProfile">
         <span class="icon">👤</span> Perfil
       </button>
-      <button class="menu-btn" @click="goTo('CarCreate')">
-        <span class="icon">🚘</span> Crear un carrito
-      </button>
-      <button class="menu-btn" @click="goTo('RouteCreate')">
-        <span class="icon">🛣️</span> Crear una ruta
-      </button>
+      <template v-if="authStore.isAdmin">
+        <button class="menu-btn" @click="goTo('CarCreate')">
+          <span class="icon">🚘</span> Crear un carrito
+        </button>
+        <button class="menu-btn" @click="goTo('RouteCreate')">
+          <span class="icon">🛣️</span> Crear una ruta
+        </button>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/authStore';
 
 const router = useRouter();
+const authStore = useAuthStore();
 
 const goTo = (routeName) => {
   router.push({ name: routeName });
+};
+
+const handleProfile = () => {
+  router.push('/profile');
 };
 </script>
 

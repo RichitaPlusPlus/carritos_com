@@ -1,14 +1,19 @@
-src/App.vue`
-```vue
+
 <template>
   <div id="app" class="app-container">
-    <RouterView />
+    <AppHeader />
+    <div v-if="authStore.loading" class="global-loader">
+      Loading...
+    </div>
+    <template v-else>
+      <RouterView />
 
-    <BottomNav
-      v-if="showBottomNav"
-      :activeView="currentRoute"
-      @navigate="handleNavigation"
-    />
+      <BottomNav
+        v-if="showBottomNav"
+        :activeView="currentRoute"
+        @navigate="handleNavigation"
+      />
+    </template>
   </div>
 </template>
 
@@ -16,9 +21,12 @@ src/App.vue`
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import BottomNav from '@/components/BottomNav.vue';
+import AppHeader from '@/components/AppHeader.vue';
+import { useAuthStore } from '@/stores/authStore';
 
 const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
 
 const showBottomNav = computed(() => {
   return ['Home', 'Routes', 'RouteDetail', 'UserMenu'].includes(route.name);
@@ -64,5 +72,17 @@ body {
   margin: 0 auto;
   background: $bg-app;
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.global-loader {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: $font-serif;
+  color: $blue-gray;
+  font-size: 1.2rem;
 }
 </style>
