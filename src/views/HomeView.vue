@@ -75,7 +75,7 @@ onMounted(() => {
 
 const goToDetail = (transport) => {
   router.push({
-    name: 'RouteDetail', // Maps to what was 'CarView' or 'RouteDetailView'
+    name: 'CarDetail', // Maps to CarDetailView
     params: { id: transport.id } // Pass ID instead of title
   });
 };
@@ -113,7 +113,7 @@ const mapRating = (rating) => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/variables';
+@use '@/assets/styles/variables' as *;
 
 .home-view {
   padding-bottom: 100px;

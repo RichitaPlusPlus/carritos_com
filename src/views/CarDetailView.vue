@@ -145,7 +145,7 @@ onMounted(() => {
 
 // Helper Functions
 const goToRouteDetail = (routeId) => {
-  router.push({ name: 'route-details', params: { id: routeId } })
+  router.push({ name: 'RouteDetail', params: { id: routeId } })
 }
 
 const openLink = (url) => {

@@ -133,7 +133,8 @@ const mapLocationStatus = (val) => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/variables';
+@use 'sass:color';
+@use '@/assets/styles/variables' as *;
 
 .stop-detail-view {
   padding-bottom: 120px;
@@ -252,7 +253,7 @@ const mapLocationStatus = (val) => {
   }
 
   &:hover {
-    background: lighten($dark-green, 5%);
+    background: color.adjust($dark-green, $lightness: 5%);
   }
 }
 </style>

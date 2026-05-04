@@ -29,7 +29,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 const showBottomNav = computed(() => {
-  return ['Home', 'Routes', 'RouteDetail', 'UserMenu'].includes(route.name);
+  return ['Home', 'Routes', 'CarDetail', 'RouteDetail', 'UserMenu'].includes(route.name);
 });
 
 const currentRoute = computed(() => {
@@ -51,7 +51,7 @@ const handleNavigation = (view) => {
 </script>
 
 <style lang="scss">
-@import '@/assets/styles/variables';
+@use '@/assets/styles/variables' as *;
 
 * {
   margin: 0;

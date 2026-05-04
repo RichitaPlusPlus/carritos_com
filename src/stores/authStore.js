@@ -14,41 +14,53 @@ export const useAuthStore = defineStore('auth', () => {
   const userDisplayName = computed(() => user.value?.user_metadata?.full_name || user.value?.email || 'User');
 
   const fetchUserRole = async () => {
-    const { data: { user: currentUser } } = await supabase.auth.getUser();
-    if (currentUser) {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', currentUser.id)
-        .single();
-      
-      if (data && !error) {
-        role.value = data.role;
-      } else {
-        role.value = 'viewer';
+    try {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) {
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', currentUser.id)
+          .single();
+        
+        if (data && !error) {
+          role.value = data.role;
+        } else {
+          console.warn('Role not found or error fetching role, defaulting to viewer:', error);
+          role.value = 'viewer';
+        }
       }
+    } catch (err) {
+      console.error('Error in fetchUserRole:', err);
+      role.value = 'viewer';
     }
   };
 
   const initialize = async () => {
     loading.value = true;
-    const { data: { session: initialSession } } = await supabase.auth.getSession();
-    session.value = initialSession;
-    user.value = initialSession?.user || null;
+    try {
+      const { data: { session: initialSession } } = await supabase.auth.getSession();
+      session.value = initialSession;
+      user.value = initialSession?.user || null;
 
-    if (user.value) {
-      await fetchUserRole();
-    }
-
-    supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      session.value = currentSession;
-      user.value = currentSession?.user || null;
-      if (event === 'SIGNED_IN') {
+      if (user.value) {
         await fetchUserRole();
       }
-    });
 
-    loading.value = false;
+      supabase.auth.onAuthStateChange(async (event, currentSession) => {
+        session.value = currentSession;
+        user.value = currentSession?.user || null;
+        if (event === 'SIGNED_IN') {
+          await fetchUserRole();
+        } else if (event === 'SIGNED_OUT') {
+          role.value = 'viewer';
+        }
+      });
+    } catch (err) {
+      console.error('Error during auth initialization:', err);
+    } finally {
+      loading.value = false;
+    }
   };
 
   const signInWithGoogle = async () => {

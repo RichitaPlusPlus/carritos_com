@@ -30,37 +30,39 @@ const routes = [
   },
   // ── CRUD Form routes (must come BEFORE the :id catch-all) ──
   {
-    path: '/cars/new',
+    path: '/menu/cars/new',
     name: 'CarCreate',
     component: () => import('@/views/CarForm.vue'),
     meta: { requiresAdmin: true }
   },
   {
-    path: '/cars/:id/edit',
+    path: '/menu/cars/:id/edit',
     name: 'CarEdit',
     component: () => import('@/views/CarForm.vue'),
-    props: true
+    props: true,
+    meta: { requiresAdmin: true }
   },
   {
-    path: '/routes/new',
+    path: '/menu/routes/new',
     name: 'RouteCreate',
     component: () => import('@/views/RouteForm.vue'),
     meta: { requiresAdmin: true }
   },
   {
-    path: '/routes/:id/edit',
+    path: '/menu/routes/:id/edit',
     name: 'RouteEdit',
     component: () => import('@/views/RouteForm.vue'),
-    props: true
+    props: true,
+    meta: { requiresAdmin: true }
   },
   {
     path: '/car/:id',
-    name: 'RouteDetail', 
+    name: 'CarDetail', 
     component: () => import('@/views/CarDetailView.vue')
   },
   {
     path: '/route/:id',
-    name: 'route-details',
+    name: 'RouteDetail',
     component: RouteDetailView
   },
   {
@@ -72,7 +74,7 @@ const routes = [
     path: '/stop/:id',
     name: 'StopDetail',
     redirect: to => {
-      return { name: 'route-details', params: { id: to.params.id } }
+      return { name: 'RouteDetail', params: { id: to.params.id } }
     }
   }
 ];

@@ -69,7 +69,7 @@ const formatRating = (rating) => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/variables';
+@use '@/assets/styles/variables' as *;
 
 .car-card {
   background: $card-background;

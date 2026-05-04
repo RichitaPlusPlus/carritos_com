@@ -497,7 +497,8 @@ const handleCancel = () => {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variables';
+@use 'sass:color';
+@use '@/assets/styles/variables' as *;
 
 /* ── Toast ─────────────────────────────────────────────────── */
 .toast {
@@ -814,7 +815,7 @@ textarea {
   background: $blue-gray;
   color: $white;
 
-  &:hover:not(:disabled) { background: darken($blue-gray, 8%); }
+  &:hover:not(:disabled) { background: color.adjust($blue-gray, $lightness: -8%); }
 }
 
 .btn-spinner {

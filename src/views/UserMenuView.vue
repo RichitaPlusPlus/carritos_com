@@ -37,7 +37,7 @@ const handleProfile = () => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/variables';
+@use '@/assets/styles/variables' as *;
 
 .user-menu-view {
   padding: 24px;

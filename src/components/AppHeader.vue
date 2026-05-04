@@ -30,7 +30,8 @@ const authStore = useAuthStore();
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/variables';
+@use 'sass:color';
+@use '@/assets/styles/variables' as *;
 
 .app-header {
   background: $white;
@@ -92,7 +93,7 @@ const authStore = useAuthStore();
     color: $white;
 
     &:hover {
-      background: darken($blue-gray, 10%);
+      background: color.adjust($blue-gray, $lightness: -10%);
     }
   }
 
@@ -101,7 +102,7 @@ const authStore = useAuthStore();
     color: $black;
 
     &:hover {
-      background: darken($red, 10%);
+      background: color.adjust($red, $lightness: -10%);
     }
   }
 }

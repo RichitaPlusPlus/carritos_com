@@ -19,7 +19,8 @@
 </template>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/variables';
+@use 'sass:color';
+@use '@/assets/styles/variables' as *;
 
 .login-view {
   position: relative;
@@ -95,7 +96,7 @@
     margin-bottom: 32px;
 
     &:hover {
-      background: darken($blue-gray, 5%);
+      background: color.adjust($blue-gray, $lightness: -5%);
     }
   }
 

@@ -32,7 +32,7 @@ defineEmits(['navigate']);
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/variables';
+@use '@/assets/styles/variables' as *;
 
 .bottom-nav {
   position: fixed;

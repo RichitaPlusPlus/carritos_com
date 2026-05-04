@@ -130,7 +130,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variables';
+@use '@/assets/styles/variables' as *;
 
 .route-detail-view {
   padding: 20px;

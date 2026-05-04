@@ -83,7 +83,7 @@ const filteredRoutes = computed(() => {
 });
 
 const goToRoute = (id) => {
-  router.push({ name: 'route-details', params: { id } });
+  router.push({ name: 'RouteDetail', params: { id } });
 };
 
 const openLink = (url) => {
@@ -115,7 +115,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/styles/variables';
+@use '@/assets/styles/variables' as *;
 
 .routes-view {
   padding: 20px;

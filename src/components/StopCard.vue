@@ -33,7 +33,8 @@ defineEmits(['click']);
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/variables';
+@use 'sass:color';
+@use '@/assets/styles/variables' as *;
 
 .stop-card {
   background: $white;
@@ -97,7 +98,7 @@ defineEmits(['click']);
     }
 
     &:hover {
-      background: lighten($black, 10%);
+      background: color.adjust($black, $lightness: 10%);
     }
   }
 }

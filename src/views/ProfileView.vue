@@ -49,7 +49,8 @@ const translatedRole = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/styles/variables';
+@use 'sass:color';
+@use '@/assets/styles/variables' as *;
 
 .profile-view {
   padding: 24px;
@@ -139,13 +140,13 @@ const translatedRole = computed(() => {
   
   &.role-admin {
     background-color: rgba($red, 0.15);
-    color: darken($red, 20%);
+    color: color.adjust($red, $lightness: -20%);
     border: 1px solid rgba($red, 0.3);
   }
   
   &.role-editor {
     background-color: rgba($yellow, 0.2);
-    color: darken($yellow, 40%);
+    color: color.adjust($yellow, $lightness: -40%);
     border: 1px solid rgba($yellow, 0.4);
   }
   
