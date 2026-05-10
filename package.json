@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "test:unit": "vitest",
     "lint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "prettieate": "prettier --write {js,vue,json,md,scss,css,html,.env}",
+    "format:check": "prettier --check {js,vue,json,md,scss,css,html,.env}"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",
@@ -31,7 +32,7 @@
     "eslint-plugin-vue": "~10.6.2",
     "globals": "^17.0.0",
     "jsdom": "^27.4.0",
-    "prettier": "3.7.4",
+    "prettier": "^3.8.3",
     "sass": "^1.70.0",
     "sass-embedded": "^1.97.3",
     "vite": "^7.3.0",
