@@ -365,7 +365,12 @@ onMounted(async () => {
     }
   } catch (err) {
     console.error('Error loading form data:', err)
-    showToast('Error al cargar datos: ' + (err.message || err), 'error')
+    if (err.status === 403 || err.code === '42501') {
+      await authStore.fetchUserRole()
+      showToast('Error de permisos al cargar datos.', 'error')
+    } else {
+      showToast('Error al cargar datos: ' + (err.message || err), 'error')
+    }
   } finally {
     initialLoading.value = false
   }
@@ -483,7 +488,14 @@ const save = async () => {
     }, 1500)
   } catch (err) {
     console.error('Error saving car:', err)
-    showToast('Error al guardar: ' + (err.message || err), 'error')
+    
+    // If we get a 403, it might be that our role in the store is stale
+    if (err.status === 403 || err.code === '42501') {
+      await authStore.fetchUserRole()
+      showToast('Error de permisos. Se ha actualizado tu perfil.', 'error')
+    } else {
+      showToast('Error al guardar: ' + (err.message || err), 'error')
+    }
   } finally {
     saving.value = false
   }

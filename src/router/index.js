@@ -88,17 +88,23 @@ router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   
   if (authStore.loading) {
-    await new Promise(resolve => {
-      if (!authStore.loading) resolve();
-      else {
-        const unwatch = watch(() => authStore.loading, (newVal) => {
-          if (!newVal) {
-            unwatch();
-            resolve();
-          }
-        });
-      }
-    });
+    try {
+      await Promise.race([
+        new Promise(resolve => {
+          const unwatch = watch(() => authStore.loading, (val) => {
+            if (!val) {
+              unwatch();
+              resolve();
+            }
+          });
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Auth timeout')), 5000))
+      ]);
+    } catch (error) {
+      console.error('Auth initialization timeout:', error);
+      // We continue but might fail role checks later if it never loads
+      // Alternatively, we could redirect to an error page if we had one
+    }
   }
 
   if (to.meta.requiresAdmin && !authStore.isAdmin) {
