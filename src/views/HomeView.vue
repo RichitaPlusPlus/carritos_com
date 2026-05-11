@@ -104,11 +104,11 @@ const mapCrowdStatus = (status) => {
 
 const mapRating = (rating) => {
   switch (rating) {
-    case 'angry': return '😠';
-    case 'sad': return '☹️';
-    case 'mid': return '😐';
-    case 'happy': return '😊';
-    default: return '😐';
+    case 'angry': return getIconUrl("angry.png");
+    case 'sad': return getIconUrl("sad.png");
+    case 'mid': return getIconUrl("mid.png");
+    case 'happy': return getIconUrl("happy.png");
+    default: return getIconUrl("mid.png");
   }
 };
 </script>

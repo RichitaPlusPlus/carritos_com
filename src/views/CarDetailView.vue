@@ -7,12 +7,12 @@
       <h1>{{ car.name }}</h1>
       <div class="car-meta">
         <div class="logo-container">
-          <img 
-            v-if="car.logos?.url && !imageError" 
-            :src="car.logos.url" 
+          <img
+            v-if="car.logos?.url && !imageError"
+            :src="car.logos.url"
             @error="handleImageError"
-            :alt="car.name" 
-            class="logo" 
+            :alt="car.name"
+            class="logo"
           />
           <div v-else class="logo-fallback">
             {{ getFallbackEmoji(car.category) }}

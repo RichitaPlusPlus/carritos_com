@@ -13,7 +13,9 @@
           <span class="icon">🚘</span> Crear un carrito
         </button>
         <button class="menu-btn" @click="goTo('RouteCreate')">
-          <span class="icon" :src="getIconUrl('mapa-32.png')"></span> Crear una ruta
+          <span class="icon">
+            <img :src="getIconUrl('mapa-3d-hd.png')" class="menu-icon-img" alt="Mapa" />
+          </span> Crear una ruta
         </button>
       </template>
     </div>

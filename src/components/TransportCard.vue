@@ -116,6 +116,14 @@ const handleImgError = () => {
 
   &__mood {
     font-size: 20px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__mood-img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
   }
 
   &__prices {
@@ -160,3 +168,4 @@ const handleImgError = () => {
   }
 }
 </style>
+
