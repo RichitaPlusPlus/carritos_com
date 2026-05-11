@@ -13,7 +13,7 @@
           <span class="icon">🚘</span> Crear un carrito
         </button>
         <button class="menu-btn" @click="goTo('RouteCreate')">
-          <span class="icon">🛣️</span> Crear una ruta
+          <span class="icon" :src="getIconUrl('mapa-32.png')"></span> Crear una ruta
         </button>
       </template>
     </div>
@@ -21,6 +21,7 @@
 </template>
 
 <script setup>
+import { getIconUrl } from '../composables/useSupabaseStorage';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/authStore';
 

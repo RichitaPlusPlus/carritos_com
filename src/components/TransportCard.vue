@@ -1,7 +1,10 @@
 <template>
   <div class="transport-card" @click="$emit('click')">
     <div class="transport-card__content">
-      <div class="transport-card__icon">{{ icon }}</div>
+      <div class="transport-card__icon">
+        <img v-if="isUrl(icon) && !imgFailed" :src="icon" class="transport-card__img" @error="handleImgError" />
+        <span v-else>{{ icon }}</span>
+      </div>
 
       <div class="transport-card__info">
         <h3 class="transport-card__title">{{ title }}</h3>
@@ -20,12 +23,13 @@
     </div>
 
     <div class="transport-card__links">
-      <button class="link-btn">Ver Rutas &gt;</button>
+      <button class="link-btn">Ver Paradas &gt;</button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref, defineProps, defineEmits } from 'vue';
 import StatusTag from './StatusTag.vue';
 
 defineProps({
@@ -38,6 +42,13 @@ defineProps({
 });
 
 defineEmits(['click']);
+
+const imgFailed = ref(false);
+const isUrl = (str) => str && (str.startsWith('http') || str.startsWith('/'));
+const handleImgError = () => {
+  imgFailed.value = true;
+};
+
 </script>
 
 <style lang="scss" scoped>
@@ -64,8 +75,20 @@ defineEmits(['click']);
   }
 
   &__icon {
+    width: 40px;
+    height: 40px;
     font-size: 32px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
   }
 
   &__info {

@@ -1,7 +1,18 @@
 <template>
-  <div class="car-card" :class="{ 'busy': car.crowd_status === 'busy' }">
+  <div class="car-card" :class="{ 'busy': car.crowd_status === 'busy' }" @click="$emit('click')">
     <div class="car-card__header">
-      <img :src="car.logos?.url" :alt="car.logos?.type" class="car-card__logo" />
+      <div class="car-card__logo-container">
+        <img
+          v-if="icon && !imageError"
+          :src="icon"
+          @error="handleImageError"
+          :alt="car.name"
+          class="car-card__logo"
+        />
+        <div v-else class="car-card__fallback">
+          {{ getFallbackEmoji(car.category) }}
+        </div>
+      </div>
       <h3 class="car-card__name">{{ car.name }}</h3>
       <span class="car-card__category">{{ formatCategory(car.category) }}</span>
     </div>
@@ -9,7 +20,7 @@
     <div class="car-card__content">
       <p class="car-card__cost">{{ formatCost(car.cost_min, car.cost_max) }}</p>
       <p class="car-card__schedule">
-        <IconClock /> {{ car.schedule_start }} - {{ car.schedule_end }}
+        ⏱️ {{ car.schedule_start }} - {{ car.schedule_end }}
       </p>
       <div class="car-card__meta">
         <span class="status-badge" :class="car.crowd_status">
@@ -24,15 +35,31 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
-import IconClock from '@/components/icons/IconClock.vue'
+import { ref, defineProps, defineEmits } from 'vue'
 
 defineProps({
   car: {
     type: Object,
     required: true
+  },
+  icon: {
+    type: String,
+    default: ''
   }
 })
+
+defineEmits(['click'])
+
+const imageError = ref(false)
+
+const handleImageError = () => {
+  imageError.value = true
+}
+
+const getFallbackEmoji = (category) => {
+  if (category?.includes('bus')) return '🚌'
+  return '🚗'
+}
 
 const formatCategory = (category) => {
   const map = {
@@ -72,65 +99,91 @@ const formatRating = (rating) => {
 @use '@/assets/styles/variables' as *;
 
 .car-card {
-  background: $card-background;
-  border: 2px solid $border-color;
-  border-radius: $border-radius-lg;
-  padding: $spacing-lg;
+  background: $white;
+  border: 2px solid $beige-gray;
+  border-radius: $radius-lg;
+  padding: 16px;
   cursor: pointer;
-  transition: all $transition-normal;
-  box-shadow: 0 2px 8px $shadow-color;
+  transition: all 0.2s;
+  box-shadow: $shadow-sm;
 
   &:hover {
     transform: translateY(-4px);
-    border-color: $primary-color;
-    box-shadow: 0 8px 24px rgba($primary-color, 0.1);
+    border-color: $blue-gray;
+    box-shadow: $shadow-md;
   }
 
   &.busy {
-    border-left: 4px solid $crowd-busy;
+    border-left: 4px solid $red;
   }
 }
 
 .car-card__header {
   display: flex;
   align-items: center;
-  gap: $spacing-sm;
-  margin-bottom: $spacing-md;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.car-card__logo-container {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f0f0f0;
+  flex-shrink: 0;
 }
 
 .car-card__logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+}
+
+.car-card__fallback {
+  font-size: 24px;
 }
 
 .car-card__name {
   flex: 1;
   margin: 0;
   font-size: 1.25rem;
-  color: $text-primary;
+  color: $black;
 }
 
 .car-card__category {
-  background: rgba($primary-color, 0.1);
-  color: $primary-color;
+  background: rgba($blue-gray, 0.1);
+  color: $blue-gray;
   padding: 4px 10px;
-  border-radius: $border-radius-sm;
+  border-radius: $radius-sm;
   font-size: 12px;
   font-weight: 600;
 }
 
 .car-card__content {
   p {
-    margin: $spacing-xs 0;
-    color: $text-secondary;
+    margin: 4px 0;
+    color: #666;
   }
 }
 
 .car-card__meta {
   display: flex;
-  gap: $spacing-sm;
-  margin-top: $spacing-md;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: $radius-sm;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba($blue-gray, 0.1);
+  color: $blue-gray;
+
+  &.busy { background: rgba($red, 0.1); color: $red; }
 }
 </style>

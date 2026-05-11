@@ -39,6 +39,7 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import TransportCard from '@/components/TransportCard.vue';
 import { useSupabaseData } from '@/composables/useSupabaseData';
+import { getIconUrl } from '../composables/useSupabaseStorage';
 
 const router = useRouter();
 const { fetchCars, fetchDollarRate, loading, error } = useSupabaseData();
@@ -58,7 +59,7 @@ const loadData = async () => {
   transports.value = carsData.map(car => ({
     id: car.id,
     // Use the logo url from the joined table, or a fallback
-    icon: car.logos?.url || (car.category?.includes('bus') ? '🚌' : '🚗'),
+    icon: car.logos?.url || (car.category?.includes('bus') ? getIconUrl('bus-3d.png') : getIconUrl('coche-3d.png')),
     title: car.name,
     schedule: `${formatTime(car.schedule_start)} - ${formatTime(car.schedule_end)}`,
     status: mapCrowdStatus(car.crowd_status),

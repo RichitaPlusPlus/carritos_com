@@ -6,7 +6,18 @@
       </button>
       <h1>{{ car.name }}</h1>
       <div class="car-meta">
-        <img :src="car.logos?.url" :alt="car.logos?.type" class="logo" />
+        <div class="logo-container">
+          <img 
+            v-if="car.logos?.url && !imageError" 
+            :src="car.logos.url" 
+            @error="handleImageError"
+            :alt="car.name" 
+            class="logo" 
+          />
+          <div v-else class="logo-fallback">
+            {{ getFallbackEmoji(car.category) }}
+          </div>
+        </div>
         <span class="category">{{ formatCategory(car.category) }}</span>
         <span class="cost">{{ formatCost(car.cost_min, car.cost_max) }}</span>
       </div>
@@ -123,6 +134,16 @@ const car = ref({})
 const routes = ref([])
 const loading = ref(true)
 const error = ref(null)
+const imageError = ref(false)
+
+const handleImageError = () => {
+  imageError.value = true
+}
+
+const getFallbackEmoji = (category) => {
+  if (category?.includes('bus')) return '🚌'
+  return '🚗'
+}
 
 const fetchCarDetails = async () => {
   try {
@@ -208,7 +229,7 @@ const formatLocationStatus = (status) => {
 }
 </script>
 
-<style>
+<style scoped>
 
 .car-details {
   max-width: 800px;
@@ -242,11 +263,26 @@ const formatLocationStatus = (status) => {
   margin-bottom: 30px;
 }
 
-.logo {
-  width: 40px;
-  height: 40px;
+.logo-container {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
   border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.logo {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+}
+
+.logo-fallback {
+  font-size: 28px;
 }
 
 .category, .cost {
@@ -550,17 +586,17 @@ const formatLocationStatus = (status) => {
   .car-info-grid {
     gap: 8px;
   }
-  
+
   .info-card {
     padding: 10px 5px;
   }
-  
+
   .info-card h3 {
     font-size: 11px;
     margin-bottom: 4px;
     white-space: normal;
   }
-  
+
   .info-card p {
     font-size: 12px;
   }

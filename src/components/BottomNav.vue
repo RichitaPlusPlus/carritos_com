@@ -4,26 +4,27 @@
       :class="['nav-btn', { active: activeView === 'home' }]"
       @click="$emit('navigate', 'home')"
     >
-      🚗
+      <img class="icon" :src="getIconUrl('coche-3d.png')" alt="Carritos" />
     </button>
 
     <button
       :class="['nav-btn', { active: activeView === 'routes' }]"
       @click="$emit('navigate', 'routes')"
     >
-      🛣️
+      <img class="icon" :src="getIconUrl('mapa-3d.png')" alt="Rutas" />
     </button>
 
     <button
       :class="['nav-btn', { active: activeView === 'menu' }]"
       @click="$emit('navigate', 'menu')"
     >
-      👤
+      <img class="icon" :src="getIconUrl('contacto-3d.png')" alt="Perfil" />
     </button>
   </nav>
 </template>
 
 <script setup>
+import { getIconUrl } from '../composables/useSupabaseStorage';
 defineProps({
   activeView: String
 });
@@ -51,6 +52,11 @@ defineEmits(['navigate']);
   z-index: 100;
 }
 
+.icon {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+}
 .nav-btn {
   background: none;
   border: none;

@@ -5,18 +5,18 @@
       <div class="user-section">
         <template v-if="authStore.isAuthenticated">
           <div class="user-info">
-            <img 
-              v-if="authStore.user?.user_metadata?.avatar_url" 
-              :src="authStore.user.user_metadata.avatar_url" 
-              alt="Avatar" 
-              class="user-avatar" 
+            <img
+              v-if="authStore.user?.user_metadata?.avatar_url"
+              :src="authStore.user.user_metadata.avatar_url"
+              alt="Avatar"
+              class="user-avatar"
             />
             <span class="user-name">{{ authStore.user?.user_metadata?.full_name || 'User' }}</span>
           </div>
-          <button @click="authStore.signOut" class="btn-logout">Logout</button>
+          <button @click="authStore.signOut" class="btn-logout">Cerrar Sesion</button>
         </template>
         <template v-else>
-          <button @click="authStore.signInWithGoogle" class="btn-login">Sign in with Google</button>
+          <button @click="authStore.signInWithGoogle" class="btn-login">Iniciar Sesion con Google</button>
         </template>
       </div>
     </div>

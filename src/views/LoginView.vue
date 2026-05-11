@@ -2,7 +2,7 @@
   <div class="login-view">
     <div class="login-view__bg"></div>
     <div class="login-view__overlay"></div>
-    
+
     <div class="login-view__content">
       <div class="login-view__header">
         <h1 class="login-view__title">Carritos.Com</h1>
@@ -13,7 +13,9 @@
         Entrar
       </button>
 
-      <p class="login-view__footer">Hecho por Richard Romero</p>
+      <p class="login-view__footer">Hecho por Richard Romero 2026</p>
+      <p class="login-view__footer">Version 0.0.9</p>
+      <a color="purple" href="https://github.com/RichitaPlusPlus" target="_blank">Github</a>
     </div>
   </div>
 </template>
@@ -29,13 +31,13 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  padding: 24px;
+  padding: 26px;
   overflow: hidden;
 
   &__bg {
     position: absolute;
     inset: 0;
-    background: url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800') center/cover;
+    background: url('https://fywwmdsvtpamtkkkebqo.supabase.co/storage/v1/object/public/images_layout/wall-h.png') center/cover;
     filter: blur(8px);
     z-index: 0;
   }
@@ -93,7 +95,7 @@
     font-weight: 600;
     cursor: pointer;
     box-shadow: $shadow-lg;
-    margin-bottom: 32px;
+    margin-bottom: 20px;
 
     &:hover {
       background: color.adjust($blue-gray, $lightness: -5%);
