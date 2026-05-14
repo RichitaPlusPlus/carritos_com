@@ -16,7 +16,8 @@
     "format:check": "prettier --check {js,vue,json,md,scss,css,html,.env}"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.95.3",
+    "@supabase/postgrest-js": "^2.105.4",
+    "@supabase/supabase-js": "^2.105.4",
     "pinia": "^3.0.4",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4",

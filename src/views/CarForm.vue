@@ -119,7 +119,7 @@
           <option value="" disabled>Seleccionar valoración</option>
           <option value="bad">😠 Bad</option>
           <option value="sad">😕 Sad</option>
-          <option value="mid">😐 Medium</option>
+          <option value="mid">😐 Mid</option>
           <option value="happy">😊 Happy</option>
         </select>
         <span v-if="errors.rating" class="error-msg">{{ errors.rating }}</span>

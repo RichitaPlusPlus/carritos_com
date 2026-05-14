@@ -6,15 +6,19 @@
 
     <div class="menu-options">
       <button class="menu-btn" @click="handleProfile">
-        <span class="icon">👤</span> Perfil
+        <span class="icon">
+          <img :src="getIconUrl('contacto-3d.png')" class="menu-icon-img" alt="Perfil" />
+        </span> Perfil
       </button>
       <template v-if="authStore.isAdmin">
         <button class="menu-btn" @click="goTo('CarCreate')">
-          <span class="icon">🚘</span> Crear un carrito
+          <span class="icon">
+            <img :src="getIconUrl('coche-3d.png')" class="menu-icon-img" alt="Carrito" />
+          </span> Crear un carrito
         </button>
         <button class="menu-btn" @click="goTo('RouteCreate')">
           <span class="icon">
-            <img :src="getIconUrl('mapa-3d-hd.png')" class="menu-icon-img" alt="Mapa" />
+            <img :src="getIconUrl('mapa-3d.png')" class="menu-icon-img" alt="Mapa" />
           </span> Crear una ruta
         </button>
       </template>
@@ -85,7 +89,15 @@ const handleProfile = () => {
 
   .icon {
     margin-right: 15px;
-    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menu-icon-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
   }
 }
 </style>

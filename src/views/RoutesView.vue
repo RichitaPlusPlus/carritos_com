@@ -34,7 +34,6 @@
         />
 
         <div class="status-row">
-          <span class="mood-icon">😐</span>
           <StatusTag
             :text="mapLocationStatus(route.location_status).text"
             :type="mapLocationStatus(route.location_status).type"

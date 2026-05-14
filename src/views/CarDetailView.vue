@@ -71,7 +71,8 @@
                 ⏱️ {{ formatWaitTime(route.wait_time) }}
               </span>
               <span class="location-status" :class="route.location_status">
-                📍 {{ formatLocationStatus(route.location_status) }}
+                <img :src="getLocationStatusIcon(route.location_status)" class="status-icon" />
+                {{ formatLocationStatus(route.location_status) }}
               </span>
             </div>
 
@@ -191,8 +192,18 @@ const formatCost = (min, max) => {
   return `${min} - ${max} Bs`
 }
 
+const formatTime = (timeStr) => {
+  if (!timeStr) return '';
+  const [hours, minutes] = timeStr.split(':');
+  const h = parseInt(hours);
+  const ampm = h >= 12 ? 'pm' : 'am';
+  const h12 = h % 12 || 12;
+  return `${h12}:${minutes} ${ampm}`;
+};
+
 const formatSchedule = (start, end) => {
-  return `${start} - ${end}`
+  if (!start || !end) return 'No disponible';
+  return `${formatTime(start)} - ${formatTime(end)}`;
 }
 
 const formatCrowd = (status) => {
@@ -222,6 +233,16 @@ const getRatingIcon = (rating) => {
     'happy': 'happy.ico'
   }
   const iconName = map[rating] || 'medium.ico'
+  return getIconUrl(iconName)
+}
+
+const getLocationStatusIcon = (status) => {
+  const map = {
+    'horrible': 'bad.ico',
+    'regular': 'medium.ico',
+    'good': 'happy.ico'
+  }
+  const iconName = map[status] || 'medium.ico'
   return getIconUrl(iconName)
 }
 

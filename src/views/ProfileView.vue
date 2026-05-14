@@ -6,19 +6,19 @@
 
     <div class="profile-card">
       <div class="avatar-container">
-        <img 
-          v-if="authStore.user?.user_metadata?.avatar_url" 
-          :src="authStore.user.user_metadata.avatar_url" 
-          alt="Avatar" 
-          class="avatar-img" 
+        <img
+          v-if="authStore.user?.user_metadata?.avatar_url"
+          :src="authStore.user.user_metadata.avatar_url"
+          alt="Avatar"
+          class="avatar-img"
         />
         <div v-else class="avatar-placeholder">👤</div>
       </div>
-      
+
       <div class="profile-info">
         <h2 class="user-name">{{ authStore.userDisplayName }}</h2>
         <p class="user-email">{{ authStore.user?.email }}</p>
-        
+
         <div class="role-badge" :class="roleClass">
           {{ translatedRole }}
         </div>
@@ -44,7 +44,7 @@ const roleClass = computed(() => {
 const translatedRole = computed(() => {
   if (authStore.role === 'admin') return 'Administrador';
   if (authStore.role === 'editor') return 'Editor';
-  return 'Espectador';
+  return 'Usuario';
 });
 </script>
 
@@ -68,7 +68,7 @@ const translatedRole = computed(() => {
     cursor: pointer;
     font-weight: 600;
     padding: 0;
-    
+
     &:hover {
       text-decoration: underline;
     }
@@ -88,7 +88,7 @@ const translatedRole = computed(() => {
 
 .avatar-container {
   margin-bottom: 16px;
-  
+
   .avatar-img {
     width: 100px;
     height: 100px;
@@ -96,7 +96,7 @@ const translatedRole = computed(() => {
     object-fit: cover;
     border: 3px solid $beige-gray;
   }
-  
+
   .avatar-placeholder {
     width: 100px;
     height: 100px;
@@ -137,19 +137,19 @@ const translatedRole = computed(() => {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  
+
   &.role-admin {
     background-color: rgba($red, 0.15);
     color: color.adjust($red, $lightness: -20%);
     border: 1px solid rgba($red, 0.3);
   }
-  
+
   &.role-editor {
     background-color: rgba($yellow, 0.2);
     color: color.adjust($yellow, $lightness: -40%);
     border: 1px solid rgba($yellow, 0.4);
   }
-  
+
   &.role-viewer {
     background-color: rgba($blue-gray, 0.1);
     color: $blue-gray;
