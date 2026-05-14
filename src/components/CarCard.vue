@@ -26,7 +26,8 @@
         <span class="status-badge" :class="car.crowd_status">
           {{ formatCrowd(car.crowd_status) }}
         </span>
-        <span class="status-badge" :class="car.rating">
+        <span class="status-badge rating-badge" :class="car.rating">
+          <img :src="getRatingIcon(car.rating)" class="rating-icon" />
           {{ formatRating(car.rating) }}
         </span>
       </div>
@@ -36,6 +37,7 @@
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue'
+import { getIconUrl } from '../composables/useSupabaseStorage';
 
 defineProps({
   car: {
@@ -86,12 +88,23 @@ const formatCrowd = (status) => {
 
 const formatRating = (rating) => {
   const map = {
-    'angry': 'Malo',
+    'bad': 'Malo',
     'sad': 'Regular',
     'mid': 'Normal',
     'happy': 'Bueno'
   }
   return map[rating] || rating
+}
+
+const getRatingIcon = (rating) => {
+  const map = {
+    'bad': 'bad.ico',
+    'sad': 'sad.ico',
+    'mid': 'medium.ico',
+    'happy': 'happy.ico'
+  }
+  const iconName = map[rating] || 'medium.ico'
+  return getIconUrl(iconName)
 }
 </script>
 
@@ -174,6 +187,19 @@ const formatRating = (rating) => {
   display: flex;
   gap: 8px;
   margin-top: 12px;
+  align-items: center;
+}
+
+.rating-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rating-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .status-badge {

@@ -117,9 +117,9 @@
           :class="{ 'input-error': errors.rating }"
         >
           <option value="" disabled>Seleccionar valoración</option>
-          <option value="angry">😠 Angry</option>
+          <option value="bad">😠 Bad</option>
           <option value="sad">😕 Sad</option>
-          <option value="mid">😐 Mid</option>
+          <option value="mid">😐 Medium</option>
           <option value="happy">😊 Happy</option>
         </select>
         <span v-if="errors.rating" class="error-msg">{{ errors.rating }}</span>
@@ -488,7 +488,7 @@ const save = async () => {
     }, 1500)
   } catch (err) {
     console.error('Error saving car:', err)
-    
+
     // If we get a 403, it might be that our role in the store is stale
     if (err.status === 403 || err.code === '42501') {
       await authStore.fetchUserRole()

@@ -12,7 +12,10 @@
 
         <div class="transport-card__status">
           <StatusTag :text="status.text" :type="status.type" />
-          <span class="transport-card__mood">{{ mood }}</span>
+          <span class="transport-card__mood">
+            <img v-if="isUrl(mood)" :src="mood" class="transport-card__mood-img" />
+            <span v-else>{{ mood }}</span>
+          </span>
         </div>
       </div>
 

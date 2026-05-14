@@ -25,18 +25,21 @@
 
     <div class="car-info-grid">
       <div class="info-card">
-        <h3>📅 Horario</h3>
+        <h3>Horario</h3>
         <p>{{ formatSchedule(car.schedule_start, car.schedule_end) }}</p>
       </div>
 
       <div class="info-card">
-        <h3>👥 Concurrencia</h3>
+        <h3>Concurrencia</h3>
         <p>{{ formatCrowd(car.crowd_status) }}</p>
       </div>
 
       <div class="info-card">
-        <h3>⭐ Valoración</h3>
-        <p>{{ formatRating(car.rating) }}</p>
+        <h3>Valoración</h3>
+        <div class="rating-display">
+          <img v-if="car.rating" :src="getRatingIcon(car.rating)" class="rating-icon" />
+          <p>{{ formatRating(car.rating) }}</p>
+        </div>
       </div>
     </div>
 
@@ -127,6 +130,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { carritosService } from '@/lib/carritosService'
+import { getIconUrl } from '../composables/useSupabaseStorage';
 
 const route = useRoute()
 const router = useRouter()
@@ -193,21 +197,32 @@ const formatSchedule = (start, end) => {
 
 const formatCrowd = (status) => {
   const map = {
-    'busy': 'Lleno 🚶‍♂️🚶‍♀️',
-    'mid_busy': 'Moderado 👥',
-    'fast': 'Rapido 🏃'
+    'busy': 'Lleno',
+    'mid_busy': 'Moderado',
+    'fast': 'Rapido'
   }
   return map[status] || status
 }
 
 const formatRating = (rating) => {
   const map = {
-    'angry': 'Mala 😠',
-    'sad': 'Regular 😕',
-    'mid': 'Normal 😐',
-    'happy': 'Buenisimo 😊'
+    'bad': 'Mala',
+    'sad': 'Regular',
+    'mid': 'Normal',
+    'happy': 'Buenisimo'
   }
   return map[rating] || rating
+}
+
+const getRatingIcon = (rating) => {
+  const map = {
+    'bad': 'bad.ico',
+    'sad': 'sad.ico',
+    'mid': 'medium.ico',
+    'happy': 'happy.ico'
+  }
+  const iconName = map[rating] || 'medium.ico'
+  return getIconUrl(iconName)
 }
 
 const formatWaitTime = (waitTime) => {
@@ -330,6 +345,19 @@ const formatLocationStatus = (status) => {
   font-size: 14px;
   font-weight: 600;
   color: #2c3e50;
+}
+
+.rating-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.rating-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 /* Route Visualization */

@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "test:unit": "vitest",
     "lint": "eslint . --fix --cache",
-    "prettieate": "prettier --write {js,vue,json,md,scss,css,html,.env}",
+    "prety": "prettier --write {js,vue,json,md,scss,css,html,.env}",
     "format:check": "prettier --check {js,vue,json,md,scss,css,html,.env}"
   },
   "dependencies": {
