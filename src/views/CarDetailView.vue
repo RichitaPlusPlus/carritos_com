@@ -504,6 +504,14 @@ const formatLocationStatus = (status) => {
   font-size: 13px;
   padding: 3px 8px;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-icon {
+  width: 26px;
+  height: 26px;
 }
 
 .wait-time.short_wait {

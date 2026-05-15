@@ -87,12 +87,12 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   
-  if (authStore.loading) {
+  if (!authStore.initialized) {
     try {
       await Promise.race([
         new Promise(resolve => {
-          const unwatch = watch(() => authStore.loading, (val) => {
-            if (!val) {
+          const unwatch = watch(() => authStore.initialized, (val) => {
+            if (val) {
               unwatch();
               resolve();
             }
@@ -102,8 +102,6 @@ router.beforeEach(async (to, from, next) => {
       ]);
     } catch (error) {
       console.error('Auth initialization timeout:', error);
-      // We continue but might fail role checks later if it never loads
-      // Alternatively, we could redirect to an error page if we had one
     }
   }
 

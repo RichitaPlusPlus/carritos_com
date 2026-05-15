@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', () => {
   const session = ref(null);
   const role = ref('viewer');
   const loading = ref(true);
+  const initialized = ref(false);
 
   const isAuthenticated = computed(() => !!user.value);
   const isAdmin = computed(() => role.value === 'admin');
@@ -16,20 +17,24 @@ export const useAuthStore = defineStore('auth', () => {
   const fetchUserRole = async () => {
     try {
       const { data: { user: currentUser } } = await supabase.auth.getUser();
-      if (currentUser) {
-        const { data, error } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', currentUser.id)
-          .single();
-        
-        if (data && !error) {
-          role.value = data.role;
-        } else {
-          console.warn('Role not found or error fetching role, defaulting to viewer:', error);
-          role.value = 'viewer';
-        }
+      if (!currentUser) {
+        role.value = 'viewer';
+        return;
       }
+
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', currentUser.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Error fetching role:', error);
+        role.value = 'viewer';
+        return;
+      }
+
+      role.value = data?.role || 'viewer';
     } catch (err) {
       console.error('Error in fetchUserRole:', err);
       role.value = 'viewer';
@@ -37,9 +42,14 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   const initialize = async () => {
+    if (initialized.value) return;
+
     loading.value = true;
     try {
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
+      // 1. Get initial session
+      const { data: { session: initialSession }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) throw sessionError;
+
       session.value = initialSession;
       user.value = initialSession?.user || null;
 
@@ -47,9 +57,11 @@ export const useAuthStore = defineStore('auth', () => {
         await fetchUserRole();
       }
 
+      // 2. Setup listener for future changes
       supabase.auth.onAuthStateChange(async (event, currentSession) => {
         session.value = currentSession;
         user.value = currentSession?.user || null;
+        
         if (event === 'SIGNED_IN') {
           await fetchUserRole();
         } else if (event === 'SIGNED_OUT') {
@@ -60,6 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
       console.error('Error during auth initialization:', err);
     } finally {
       loading.value = false;
+      initialized.value = true;
     }
   };
 
@@ -80,6 +93,7 @@ export const useAuthStore = defineStore('auth', () => {
     session,
     role,
     loading,
+    initialized,
     isAuthenticated,
     isAdmin,
     isEditor,
