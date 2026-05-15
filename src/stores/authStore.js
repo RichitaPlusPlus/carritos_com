@@ -14,29 +14,24 @@ export const useAuthStore = defineStore('auth', () => {
   const isEditor = computed(() => role.value === 'admin' || role.value === 'editor');
   const userDisplayName = computed(() => user.value?.user_metadata?.full_name || user.value?.email || 'User');
 
-  const fetchUserRole = async () => {
-    try {
-      const { data: { user: currentUser } } = await supabase.auth.getUser();
-      if (!currentUser) {
-        role.value = 'viewer';
-        return;
-      }
+  const fetchUserRole = async (userId) => {
+    const id = userId || user.value?.id;
+    if (!id) {
+      role.value = 'viewer';
+      return;
+    }
 
+    try {
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
-        .eq('user_id', currentUser.id)
+        .eq('user_id', id)
         .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching role:', error);
-        role.value = 'viewer';
-        return;
-      }
-
+      if (error) throw error;
       role.value = data?.role || 'viewer';
     } catch (err) {
-      console.error('Error in fetchUserRole:', err);
+      console.error('Error fetching role:', err);
       role.value = 'viewer';
     }
   };
@@ -54,7 +49,11 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = initialSession?.user || null;
 
       if (user.value) {
-        await fetchUserRole();
+        // Fetch role with a timeout to prevent hanging the whole app
+        await Promise.race([
+          fetchUserRole(user.value.id),
+          new Promise(resolve => setTimeout(resolve, 3000))
+        ]);
       }
 
       // 2. Setup listener for future changes
@@ -62,8 +61,8 @@ export const useAuthStore = defineStore('auth', () => {
         session.value = currentSession;
         user.value = currentSession?.user || null;
         
-        if (event === 'SIGNED_IN') {
-          await fetchUserRole();
+        if (event === 'SIGNED_IN' && currentSession?.user) {
+          await fetchUserRole(currentSession.user.id);
         } else if (event === 'SIGNED_OUT') {
           role.value = 'viewer';
         }

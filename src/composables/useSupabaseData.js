@@ -7,29 +7,29 @@ export function useSupabaseData() {
 
   // Fetch all cars with their logo
   const fetchCars = async () => {
-    loading.value = true
-    error.value = null
+    loading.value = true;
+    error.value = null;
     try {
       const { data, error: err } = await supabase
         .from('cars')
         .select(`
           *,
-          logos (
+          logos:logo_type (
             url,
             type
           )
         `)
 
-      if (err) throw err
-      return data
+      if (err) throw err;
+      return data || [];
     } catch (err) {
-      error.value = err.message
-      console.error('Error fetching cars:', err)
-      return []
+      error.value = err.message;
+      console.error('Error fetching cars:', err);
+      return [];
     } finally {
-      loading.value = false
+      loading.value = false;
     }
-  }
+  };
 
   // Fetch routes for a specific car
   // Since the relationship is stored in cars.route_ids (array),
@@ -43,7 +43,7 @@ export function useSupabaseData() {
         .from('cars')
         .select(`
           *,
-          logos (
+          logos:logo_type (
             url,
             type
           )
